@@ -1,0 +1,170 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>To Do App</title>
+
+    <script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
+
+    <style>
+        body {
+            min-height: 100vh;
+            background: linear-gradient(135deg, #fddb92, #d1c4e9);
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            font-family: "Poppins", sans-serif;
+        }
+
+        .container {
+            width: 500px;
+            padding: 40px;
+            background: #fff7fa;
+            border-radius: 20px;
+            box-shadow: 0 12px 35px rgba(186, 104, 200, 0.25);
+            color: #4b2c5e;
+        }
+
+        h2 {
+            text-align: center;
+            margin-bottom: 20px;
+        }
+
+        .user-box {
+            background: white;
+            padding: 10px;
+            border-radius: 20px;
+            margin-bottom: 15px;
+            text-align: center;
+        }
+
+        input {
+            width: 70%;
+            padding: 12px;
+            border-radius: 12px;
+            border: 2px solid #f8bbd0;
+            outline: none;
+            background: #fff5fa;
+        }
+
+        .add-btn {
+            padding: 12px 18px;
+            border-radius: 12px;
+            border: none;
+            background: linear-gradient(135deg, #ff80ab, #ff4081);
+            color: white;
+            cursor: pointer;
+        }
+
+        ul {
+            list-style: none;
+            padding: 0;
+            margin-top: 20px;
+        }
+
+        li {
+            background: white;
+            padding: 12px;
+            margin-bottom: 10px;
+            border-radius: 12px;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+        }
+
+        .task-text {
+            flex: 1;
+        }
+
+        .actions button {
+            padding: 6px 10px;
+            font-size: 13px;
+            margin-left: 5px;
+            border-radius: 8px;
+            border: none;
+            cursor: pointer;
+        }
+
+        .edit-btn {
+            background-color:  #ff80ab;
+            color: white;
+        }
+
+        .delete-btn {
+            background-color: #ff80ab;
+            color: white;
+        }
+
+        .logout-btn {
+            margin-top: 15px;
+            width: 100%;
+            padding: 10px;
+            border-radius: 12px;
+            border: none;
+            background:  #ff80ab;
+            color: white;
+            cursor: pointer;
+        }
+    </style>
+</head>
+
+<body>
+
+<div class="container">
+
+    <!-- User Name -->
+    <div class="user-box">
+        <h3>Hi, {{ request.session.name }}</h3>
+    </div>
+
+    <!-- Add Task Form -->
+    <form method="POST" action="{% url 'todotask' %}">
+        {% csrf_token %}
+        <input type="text" name="task" placeholder="Enter task">
+        <button type="submit" class="add-btn">Add</button>
+    </form>
+
+    <!-- Task List -->
+    <ul>
+        {% for t in tasks %}
+        <li>
+            <span class="task-text">{{ t.task }}</span>
+
+            <div class="actions">
+                <a href="{% url 'edit_task' t.id %}">
+                    <button type="button" class="edit-btn">Edit</button>
+                </a>
+
+                <a href="{% url 'delete_task' t.id %}">
+                    <button type="button" class="delete-btn">Delete</button>
+                </a>
+            </div>
+        </li>
+        {% empty %}
+        <li>No tasks yet</li>
+        {% endfor %}
+    </ul>
+
+    <!-- Logout -->
+    <form method="POST" action="{% url 'logout' %}">
+        {% csrf_token %}
+        <button type="submit" class="logout-btn">Logout</button>
+    </form>
+
+</div>
+
+<!-- SweetAlert Messages -->
+{% if messages %}
+    {% for message in messages %}
+        <script>
+            Swal.fire({
+                icon: 'error',
+                title: 'Message',
+                text: '{{ message }}'
+            });
+        </script>
+    {% endfor %}
+{% endif %}
+
+</body>
+</html>
